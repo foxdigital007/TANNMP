@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Search, Trash2, Calendar, MapPin, FileText, CheckCircle, Clock, ExternalLink, Loader2, User } from 'lucide-react';
+import { Mail, Search, Trash2, Calendar, MapPin, FileText, CheckCircle, Clock, ExternalLink, Loader2, User, Phone } from 'lucide-react';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -157,6 +157,7 @@ const Complaints = () => {
                    <div>
                      <h2 style={{ fontSize: 24, fontWeight: 900, color: '#1A1A1A', margin: 0 }}>{selected.name}</h2>
                      <div style={{ display: 'flex', gap: 16, color: '#737373', fontSize: 13, marginTop: 4 }}>
+                       <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Phone size={14} /> {selected.phone || 'N/A'}</span>
                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={14} /> {selected.place}</span>
                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Calendar size={14} /> {new Date(selected.created_at).toLocaleString()}</span>
                      </div>

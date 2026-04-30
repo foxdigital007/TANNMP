@@ -33,9 +33,9 @@ router.get('/stats', async (req, res) => {
 // ============================================================
 router.post('/complaints', upload.single('document'), async (req, res) => {
   try {
-    const { name, place, address, complaintType, description } = req.body;
+    const { name, phone, place, address, complaintType, description } = req.body;
 
-    if (!name || !place || !address || !complaintType || !description) {
+    if (!name || !phone || !place || !address || !complaintType || !description) {
       return res.status(400).json({ error: 'All fields except document are mandatory' });
     }
 
@@ -71,6 +71,7 @@ router.post('/complaints', upload.single('document'), async (req, res) => {
       .from('complaints')
       .insert({
         name,
+        phone,
         place,
         address,
         complaint_type: complaintType,
