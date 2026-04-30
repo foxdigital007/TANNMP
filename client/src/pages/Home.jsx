@@ -4,7 +4,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Briefcase, Shield, CreditCard, Users, Bell, Scale, ChevronDown, Phone, Mail, MapPin, ChevronRight, Play, AlertCircle, Upload, CheckCircle2, Loader2, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import axios from 'axios';
+import api from '../lib/api';
 import toast from 'react-hot-toast';
 
 // ── Animated counter ──────────────────────────────────────────
@@ -108,7 +108,7 @@ const Home = () => {
     // Fetch live stats — use plain axios so no auth redirect on public page
     const fetchStats = async () => {
       try {
-        const res = await axios.get('/api/public/stats');
+        const res = await api.get('/api/public/stats');
         setStats({
           members: res.data.totalMembers || 0,
           jobs: res.data.activeJobs || 0,
@@ -146,7 +146,7 @@ const Home = () => {
         formData.append('document', complaintForm.document);
       }
 
-      await axios.post('/api/public/complaints', formData, {
+      await api.post('/api/public/complaints', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
