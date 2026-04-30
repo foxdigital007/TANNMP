@@ -116,7 +116,7 @@ const Home = () => {
 
   // Complaint form state
   const [complaintForm, setComplaintForm] = useState({
-    name: '', place: '', address: '', complaintType: '', description: '', document: null
+    name: '', phone: '', place: '', address: '', complaintType: '', description: '', document: null
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -155,6 +155,7 @@ const Home = () => {
     try {
       const formData = new FormData();
       formData.append('name', complaintForm.name);
+      formData.append('phone', complaintForm.phone);
       formData.append('place', complaintForm.place);
       formData.append('address', complaintForm.address);
       formData.append('complaintType', complaintForm.complaintType);
@@ -169,7 +170,7 @@ const Home = () => {
 
       setSubmitted(true);
       toast.success('Complaint submitted successfully');
-      setComplaintForm({ name: '', place: '', address: '', complaintType: '', description: '', document: null });
+      setComplaintForm({ name: '', phone: '', place: '', address: '', complaintType: '', description: '', document: null });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to submit complaint');
     } finally {
@@ -408,14 +409,20 @@ const Home = () => {
                         <input required type="text" className="input-field" placeholder="Full Name" value={complaintForm.name} onChange={e => setComplaintForm({...complaintForm, name: e.target.value})} />
                       </div>
                       <div>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Place / City</label>
-                        <input required type="text" className="input-field" placeholder="e.g. Chennai" value={complaintForm.place} onChange={e => setComplaintForm({...complaintForm, place: e.target.value})} />
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Phone Number</label>
+                        <input required type="tel" className="input-field" placeholder="Contact Number" value={complaintForm.phone} onChange={e => setComplaintForm({...complaintForm, phone: e.target.value})} />
                       </div>
                     </div>
 
-                    <div style={{ marginBottom: 16 }}>
-                      <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Address</label>
-                      <input required type="text" className="input-field" placeholder="Full Address" value={complaintForm.address} onChange={e => setComplaintForm({...complaintForm, address: e.target.value})} />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                      <div>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Place / City</label>
+                        <input required type="text" className="input-field" placeholder="e.g. Chennai" value={complaintForm.place} onChange={e => setComplaintForm({...complaintForm, place: e.target.value})} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Address</label>
+                        <input required type="text" className="input-field" placeholder="Full Address" value={complaintForm.address} onChange={e => setComplaintForm({...complaintForm, address: e.target.value})} />
+                      </div>
                     </div>
 
                     <div style={{ marginBottom: 16 }}>

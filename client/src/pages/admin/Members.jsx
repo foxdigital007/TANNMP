@@ -140,7 +140,7 @@ const Members = () => {
                     <button onClick={() => setSelectedMemberId(null)} style={{ position: 'absolute', top: 24, right: 24, border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', width: 40, height: 40, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <X size={20} />
                     </button>
-                    <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>{memberDetail.member.first_name} {memberDetail.member.last_name}</h2>
+                    <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8, color: 'white' }}>{memberDetail.member.first_name} {memberDetail.member.last_name}</h2>
                     <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>
                         <Mail size={16} /> {memberDetail.member.email}
