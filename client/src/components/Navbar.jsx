@@ -3,11 +3,27 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown, User, LogOut, Briefcase, Scale, Info, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Navbar = () => {
-  const { isLoggedIn, user, isAdmin, logout } = useAuth();
+  const { isLoggedIn, user, isAdmin, logout, hasMembership } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleBecomeMember = () => {
+    if (!isLoggedIn) {
+      toast.error('Please login first to become a member');
+      navigate('/login');
+      return;
+    }
+    if (hasMembership) {
+      toast.success('You already have an ID card!');
+      navigate('/member/profile');
+      return;
+    }
+    navigate('/job-search');
+    setMobileOpen(false);
+  };
 
   const [scrolled, setScrolled]         = useState(false);
   const [hidden, setHidden]             = useState(false);
@@ -154,13 +170,13 @@ const Navbar = () => {
                     About TANNMP
                   </Link>
                   <div style={{ height: 1, background: '#F0F0F0' }} />
-                  <Link to="/about#become-member" onClick={() => setAboutOpen(false)}
-                    style={{ display: 'block', padding: '12px 18px', fontSize: 14, color: '#C8102E', fontWeight: 600, transition: 'background 0.15s' }}
+                  <button onClick={handleBecomeMember}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', border: 'none', padding: '12px 18px', fontSize: 14, color: '#C8102E', fontWeight: 600, transition: 'background 0.15s', cursor: 'pointer', background: 'transparent' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#FEF2F2'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     ✦ Become a Member
-                  </Link>
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -284,19 +300,30 @@ const Navbar = () => {
             }}
           >
             <div style={{ padding: '8px 24px 20px' }}>
-              {[...navLinks, { label: 'About Us', to: '/about' }, { label: '✦ Become a Member', to: '/about#become-member' }].map(({ label, to }) => (
-                <Link key={to} to={to}
-                  style={{
-                    display: 'block', padding: '12px 0',
-                    fontSize: 15, fontWeight: 600,
-                    color: isActive(to) ? '#C8102E' : '#1A1A1A',
-                    borderBottom: '1px solid #F5F5F5',
-                    transition: 'color 0.2s',
-                  }}
-                >
-                  {label}
-                </Link>
-              ))}
+                <div key={to}>
+                  {label === '✦ Become a Member' ? (
+                    <button onClick={handleBecomeMember}
+                      style={{
+                        display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '12px 0',
+                        fontSize: 15, fontWeight: 600, color: '#C8102E', borderBottom: '1px solid #F5F5F5'
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ) : (
+                    <Link to={to}
+                      style={{
+                        display: 'block', padding: '12px 0',
+                        fontSize: 15, fontWeight: 600,
+                        color: isActive(to) ? '#C8102E' : '#1A1A1A',
+                        borderBottom: '1px solid #F5F5F5',
+                        transition: 'color 0.2s',
+                      }}
+                    >
+                      {label}
+                    </Link>
+                  )}
+                </div>
               <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
                 {!isLoggedIn ? (
                   <>

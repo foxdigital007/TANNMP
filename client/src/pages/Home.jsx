@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 import { Briefcase, Shield, CreditCard, Users, Bell, Scale, ChevronDown, Phone, Mail, MapPin, ChevronRight, Play, AlertCircle, Upload, CheckCircle2, Loader2, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -95,6 +96,22 @@ const faqs = [
 // ── Home Page ─────────────────────────────────────────────────
 const Home = () => {
   const [stats, setStats] = useState({ members: 0, jobs: 0, advocates: 0, cities: 0 });
+  const { isLoggedIn, hasMembership } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBecomeMember = () => {
+    if (!isLoggedIn) {
+      toast.error('Please login first to become a member');
+      navigate('/login');
+      return;
+    }
+    if (hasMembership) {
+      toast.success('You already have an ID card!');
+      navigate('/member/profile');
+      return;
+    }
+    navigate('/job-search');
+  };
   const carouselRef = useRef(null);
 
   // Complaint form state
@@ -194,7 +211,7 @@ const Home = () => {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <Link to="/job-search"><button className="btn btn-primary" style={{ fontSize: 16, padding: '14px 32px' }}>🔍 Find Jobs</button></Link>
-              <Link to="/signup"><button className="btn btn-white" style={{ fontSize: 16, padding: '14px 32px' }}>✦ Become a Member — Free</button></Link>
+              <button onClick={handleBecomeMember} className="btn btn-white" style={{ fontSize: 16, padding: '14px 32px' }}>✦ Become a Member — Free</button>
             </motion.div>
           </motion.div>
         </div>

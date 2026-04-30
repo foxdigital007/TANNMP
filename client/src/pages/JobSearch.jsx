@@ -7,6 +7,7 @@ import api from '../lib/api';
 import toast from 'react-hot-toast';
 import { Search, MapPin, Briefcase, IndianRupee, Loader2, Building, Edit3, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BecomeMemberForm from '../components/BecomeMemberForm';
 
 const JobSearch = () => {
   const { user } = useAuth();
@@ -138,19 +139,18 @@ const JobSearch = () => {
         ) : showProfileForm ? (
           <JobProfileForm initialData={jobProfile} onSaveSuccess={handleSaveSuccess} />
         ) : !user?.memberId && !user?.member_id ? (
-          <div style={{ textAlign: 'center', padding: '80px 40px', background: 'white', borderRadius: 24, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5' }}>
-            <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-              <IndianRupee size={36} color="#D97706" />
+          <div style={{ maxWidth: 600, margin: '0 auto', background: 'white', borderRadius: 24, padding: 40, boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5' }}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <IndianRupee size={32} color="#D97706" />
+              </div>
+              <h2 style={{ fontSize: 24, fontWeight: 900, color: '#1A1A1A', marginBottom: 12 }}>Membership Application</h2>
+              <p style={{ fontSize: 16, color: '#737373', lineHeight: 1.6 }}>
+                To unlock job applications, please complete your membership profile. You will receive your digital ID card instantly.
+              </p>
             </div>
-            <h2 style={{ fontSize: 24, fontWeight: 900, color: '#1A1A1A', marginBottom: 12 }}>Membership Required</h2>
-            <p style={{ fontSize: 16, color: '#737373', maxWidth: 500, margin: '0 auto 32px', lineHeight: 1.6 }}>
-              To search and apply for jobs, you need to be an official member. Complete your profile and get your Digital ID Card to unlock this feature.
-            </p>
-            <a href="/about#become-member">
-              <button className="btn btn-primary" style={{ padding: '14px 40px', fontSize: 16 }}>
-                Complete Profile & Get ID Card
-              </button>
-            </a>
+            
+            <BecomeMemberForm />
           </div>
         ) : loading ? (
           <div style={{ textAlign: 'center', padding: '100px 0' }}>
