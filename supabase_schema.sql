@@ -237,6 +237,7 @@ CREATE TABLE IF NOT EXISTS complaints (
   address           TEXT NOT NULL,
   complaint_type    TEXT NOT NULL,
   description       TEXT NOT NULL,
+  phone             TEXT,
   document_url      TEXT,
   document_name     TEXT,
   status            TEXT DEFAULT 'pending',
