@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Briefcase, Scale, BookOpen, LogOut } from 'lucide-react';
+import { Home, Users, Briefcase, Scale, BookOpen, LogOut, MessageSquare } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminSidebar = () => {
@@ -11,6 +11,7 @@ const AdminSidebar = () => {
     { label: 'Members', to: '/admin/members', icon: Users },
     { label: 'Jobs', to: '/admin/jobs', icon: Briefcase },
     { label: 'Advocates', to: '/admin/advocates', icon: Scale },
+    { label: 'Complaints', to: '/admin/complaints', icon: MessageSquare },
     { label: 'Personal Diary', to: '/admin/diary', icon: BookOpen },
   ];
 

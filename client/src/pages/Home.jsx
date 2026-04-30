@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
-import { Briefcase, Shield, CreditCard, Users, Bell, Scale, ChevronDown, Phone, Mail, MapPin, ChevronRight, Play } from 'lucide-react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { Briefcase, Shield, CreditCard, Users, Bell, Scale, ChevronDown, Phone, Mail, MapPin, ChevronRight, Play, AlertCircle, Upload, CheckCircle2, Loader2, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 // ── Animated counter ──────────────────────────────────────────
 const Counter = ({ target, suffix = '' }) => {
@@ -96,6 +97,13 @@ const Home = () => {
   const [stats, setStats] = useState({ members: 0, jobs: 0, advocates: 0, cities: 0 });
   const carouselRef = useRef(null);
 
+  // Complaint form state
+  const [complaintForm, setComplaintForm] = useState({
+    name: '', place: '', address: '', complaintType: '', description: '', document: null
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
   useEffect(() => {
     // Fetch live stats — use plain axios so no auth redirect on public page
     const fetchStats = async () => {
@@ -104,7 +112,7 @@ const Home = () => {
         setStats({
           members: res.data.totalMembers || 0,
           jobs: res.data.activeJobs || 0,
-          advocates: 0,
+          advocates: res.data.approvedAdvocates || 0,
           cities: 0,
         });
       } catch { /* silent — show 0 if unauthenticated */ }
@@ -123,6 +131,34 @@ const Home = () => {
     }, 20);
     return () => clearInterval(interval);
   }, []);
+
+  const handleComplaintSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('name', complaintForm.name);
+      formData.append('place', complaintForm.place);
+      formData.append('address', complaintForm.address);
+      formData.append('complaintType', complaintForm.complaintType);
+      formData.append('description', complaintForm.description);
+      if (complaintForm.document) {
+        formData.append('document', complaintForm.document);
+      }
+
+      await axios.post('/api/public/complaints', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      setSubmitted(true);
+      toast.success('Complaint submitted successfully');
+      setComplaintForm({ name: '', place: '', address: '', complaintType: '', description: '', document: null });
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to submit complaint');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div style={{ background: '#F5F5F5' }}>
@@ -143,7 +179,7 @@ const Home = () => {
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(226,27,35,0.2)', border: '1px solid rgba(226,27,35,0.3)', borderRadius: 50, padding: '6px 16px', marginBottom: 24 }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-primary)', animation: 'pulse 2s infinite' }} />
-              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Tamil Nadu Naidu NMP Portal</span>
+              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Tamil Nadu Nadar NMP Portal</span>
             </motion.div>
 
             <h1 style={{ fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 900, color: 'white', lineHeight: 1.1, marginBottom: 24 }}>
@@ -153,7 +189,7 @@ const Home = () => {
             </h1>
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} style={{ fontSize: 18, color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: 40, maxWidth: 560 }}>
-              TANNMP connects job seekers with opportunities and members with verified advocates — all in one free platform built for the Naidu community.
+              TANNMP connects job seekers with opportunities and members with verified advocates — all in one free platform built for the Nadar community.
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
@@ -306,8 +342,121 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ── COMPLAINT SECTION ─────────────────────────────── */}
+      <section id="complaint" className="section" style={{ background: 'white' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 64, alignItems: 'center' }}>
+            <Reveal direction="left">
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FEF2F2', borderRadius: 50, padding: '6px 16px', marginBottom: 20 }}>
+                <AlertCircle size={14} color="#C8102E" />
+                <span style={{ fontSize: 12, color: '#C8102E', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>Public Support</span>
+              </div>
+              <h2 className="section-title">Do you have any issue?</h2>
+              <p className="section-subtitle" style={{ textAlign: 'left', margin: '8px 0 24px' }}>Please let us help you raise a complaint. We are here to support our community members and resolve any professional or legal concerns.</p>
+              
+              <div style={{ background: '#F9FAFB', borderRadius: 20, padding: 24, border: '1px solid #E5E7EB' }}>
+                <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <CheckCircle2 size={20} color="#C8102E" />
+                  </div>
+                  <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.6 }}>Your complaints are directly reviewed by our board members for quick resolution.</p>
+                </div>
+                <div style={{ display: 'flex', gap: 16 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Shield size={20} color="#C8102E" />
+                  </div>
+                  <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.6 }}>All submissions are kept strictly confidential and secure.</p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal direction="right">
+              <AnimatePresence mode="wait">
+                {submitted ? (
+                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                    style={{ textAlign: 'center', padding: '60px 40px', background: 'white', borderRadius: 24, boxShadow: '0 20px 50px rgba(0,0,0,0.08)', border: '1px solid #E5E5E5' }}>
+                    <div style={{ width: 80, height: 80, background: '#F0FDF4', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                      <CheckCircle2 size={40} color="#22C55E" />
+                    </div>
+                    <h3 style={{ fontSize: 24, fontWeight: 800, color: '#1A1A1A', marginBottom: 12 }}>Complaint Received!</h3>
+                    <p style={{ fontSize: 16, color: '#737373', lineHeight: 1.6, marginBottom: 32 }}>We have received your issue. Our team will review it and get back to you if necessary.</p>
+                    <button onClick={() => setSubmitted(false)} className="btn btn-primary" style={{ width: '100%' }}>Submit Another</button>
+                  </motion.div>
+                ) : (
+                  <motion.form initial={{ opacity: 0 }} animate={{ opacity: 1 }} onSubmit={handleComplaintSubmit}
+                    style={{ background: 'white', padding: 40, borderRadius: 24, boxShadow: '0 25px 70px rgba(0,0,0,0.1)', border: '1px solid #F3F4F6' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                      <div>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Your Name</label>
+                        <input required type="text" className="input-field" placeholder="Full Name" value={complaintForm.name} onChange={e => setComplaintForm({...complaintForm, name: e.target.value})} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Place / City</label>
+                        <input required type="text" className="input-field" placeholder="e.g. Chennai" value={complaintForm.place} onChange={e => setComplaintForm({...complaintForm, place: e.target.value})} />
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: 16 }}>
+                      <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Address</label>
+                      <input required type="text" className="input-field" placeholder="Full Address" value={complaintForm.address} onChange={e => setComplaintForm({...complaintForm, address: e.target.value})} />
+                    </div>
+
+                    <div style={{ marginBottom: 16 }}>
+                      <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Complaint Type</label>
+                      <select required className="input-field" value={complaintForm.complaintType} onChange={e => setComplaintForm({...complaintForm, complaintType: e.target.value})}>
+                        <option value="">Select Type</option>
+                        <option value="General">General Issue</option>
+                        <option value="Legal">Legal Support Needed</option>
+                        <option value="Job Related">Job Portal Issue</option>
+                        <option value="Membership">Membership / ID Card</option>
+                        <option value="Harassment">Safety / Harassment</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div style={{ marginBottom: 20 }}>
+                      <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Describe the Issue</label>
+                      <textarea required rows={4} className="input-field" placeholder="Provide details about your complaint..." style={{ resize: 'none' }} value={complaintForm.description} onChange={e => setComplaintForm({...complaintForm, description: e.target.value})} />
+                    </div>
+
+                    <div style={{ marginBottom: 24 }}>
+                      <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>Upload Supporting Documents (Optional)</label>
+                      <div style={{ position: 'relative' }}>
+                        <input type="file" id="comp-doc" hidden onChange={e => setComplaintForm({...complaintForm, document: e.target.files[0]})} />
+                        <label htmlFor="comp-doc" style={{
+                          display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
+                          background: '#F9FAFB', border: '2px dashed #D1D5DB', borderRadius: 12,
+                          cursor: 'pointer', color: '#6B7280', fontSize: 14, transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--color-primary)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = '#D1D5DB'}
+                        >
+                          {complaintForm.document ? <CheckCircle2 size={18} color="#22C55E" /> : <Upload size={18} />}
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {complaintForm.document ? complaintForm.document.name : 'Click to upload PDF or Image'}
+                          </span>
+                          {complaintForm.document && (
+                            <button onClick={(e) => { e.preventDefault(); setComplaintForm({...complaintForm, document: null}); }} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#9CA3AF' }}>
+                              <X size={16} />
+                            </button>
+                          )}
+                        </label>
+                      </div>
+                    </div>
+
+                    <button disabled={submitting} type="submit" className="btn btn-primary" style={{ width: '100%', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: 16 }}>
+                      {submitting ? <Loader2 size={20} className="animate-spin" /> : 'Raise a Complaint'}
+                    </button>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* ── VIDEO ──────────────────────────────────────────── */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: '#F9FAFB' }}>
         <div className="container" style={{ maxWidth: 860 }}>
           <Reveal>
             <div style={{ textAlign: 'center', marginBottom: 40 }}>

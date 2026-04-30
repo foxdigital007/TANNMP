@@ -301,4 +301,55 @@ router.delete('/diary/:id', adminMiddleware, async (req, res) => {
   }
 });
 
+// ============================================================
+// COMPLAINTS
+// ============================================================
+
+// GET /api/admin/complaints
+router.get('/complaints', adminMiddleware, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('complaints')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) return res.status(500).json({ error: 'Failed to fetch complaints' });
+    res.json({ complaints: data });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// PATCH /api/admin/complaints/:id/status
+router.patch('/complaints/:id/status', adminMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { error } = await supabase
+      .from('complaints')
+      .update({ status })
+      .eq('id', req.params.id);
+    
+    if (error) return res.status(500).json({ error: 'Failed to update status' });
+    res.json({ message: 'Status updated' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE /api/admin/complaints/:id
+router.delete('/complaints/:id', adminMiddleware, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from('complaints')
+      .delete()
+      .eq('id', req.params.id);
+    
+    if (error) return res.status(500).json({ error: 'Failed to delete complaint' });
+    res.json({ message: 'Complaint deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
+

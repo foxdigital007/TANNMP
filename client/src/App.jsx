@@ -21,6 +21,7 @@ const AdminMembers    = lazy(() => import('./pages/admin/Members'));
 const AdminJobs       = lazy(() => import('./pages/admin/Jobs'));
 const AdminAdvocates  = lazy(() => import('./pages/admin/Advocates'));
 const AdminDiary      = lazy(() => import('./pages/admin/Diary'));
+const AdminComplaints = lazy(() => import('./pages/admin/Complaints'));
 
 // Page-level loading fallback
 const PageLoader = () => (
@@ -99,6 +100,9 @@ function App() {
               } />
               <Route path="/admin/diary" element={
                 <AdminRoute><AdminDiary /></AdminRoute>
+              } />
+              <Route path="/admin/complaints" element={
+                <AdminRoute><AdminComplaints /></AdminRoute>
               } />
 
               {/* ── 404 ──────────────────────────────────── */}

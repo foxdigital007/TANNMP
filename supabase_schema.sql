@@ -228,6 +228,26 @@ VALUES ('resumes', 'resumes', false)
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
+-- TABLE: complaints
+-- ============================================================
+CREATE TABLE IF NOT EXISTS complaints (
+  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name              TEXT NOT NULL,
+  place             TEXT NOT NULL,
+  address           TEXT NOT NULL,
+  complaint_type    TEXT NOT NULL,
+  description       TEXT NOT NULL,
+  document_url      TEXT,
+  document_name     TEXT,
+  status            TEXT DEFAULT 'pending',
+  created_at        TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('complaints', 'complaints', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================
 -- DONE! Schema created successfully.
 -- Next: Run the backend server (see server/ directory)
 -- ============================================================
