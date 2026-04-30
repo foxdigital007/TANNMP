@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Loader2, Mail, Phone, Calendar, IdCard, ExternalLink, X, MapPin, GraduationCap, Briefcase, Code, FileText, Download } from 'lucide-react';
+import { Users, Loader2, Mail, Phone, Calendar, IdCard, ExternalLink, X, MapPin, GraduationCap, Briefcase, Code, FileText, Download, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
